@@ -4,44 +4,53 @@
 // For example: agent { docker { image 'node:16-alpine' } }
 
 pipeline {
-// Defines the agent where the pipeline will run.
-agent any
+    // Defines the agent where the pipeline will run.
+    agent any
 
-// Defines the stages of the CI/CD pipeline.
-stages {
-    // Stage 1: Build the application.
-    // This stage would typically compile code, resolve dependencies, and create an artifact.
-    stage('Build') {
-        steps {
-            // Use the `sh` step to execute a shell command.
-            // Replace this with your actual build command (e.g., `npm install`, `mvn package`, `docker build . -t my-app`).
-            echo 'Building the application...'
-            sh 'echo "Build successful!"'
-            // Example of a Docker build:
-            // sh 'docker build -t my-app:latest .'
-        }
+    // Defines the tools required for the pipeline.
+    // These names must match the tool names configured in your Jenkins setup.
+    tools {
+        jdk 'Java 21'
+        maven 'Maven 3'
     }
 
-    // Stage 2: Test the application.
-    // This stage runs automated unit tests, integration tests, or security scans.
-    stage('Test') {
-        steps {
-            echo 'Running automated tests...'
-            // Replace this with your actual test command (e.g., `npm test`, `pytest`).
-            sh 'echo "Tests passed!"'
+    // Defines the stages of the CI/CD pipeline.
+    stages {
+        // Stage 1: Checkout the code from the repository.
+        stage('Checkout') {
+            steps {
+                echo 'Pulling the latest code from GitHub...'
+                // Jenkins automatically checks out the code from the Git repository.
+            }
+        }
+
+        // Stage 2: Build the application.
+        // This stage compiles the code, resolves dependencies, and creates a build artifact.
+        stage('Build') {
+            steps {
+                echo 'Building the application with Maven...'
+                // The `bat` step is used to execute a Windows batch command.
+                bat 'mvn clean package'
+            }
+        }
+
+        // Stage 3: Test the application.
+        // This stage runs automated unit tests.
+        stage('Test') {
+            steps {
+                echo 'Running automated tests with Maven...'
+                bat 'mvn test'
+            }
+        }
+
+        // Stage 4: Deploy the application.
+        // This stage deploys the built artifact.
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the application...'
+                // A simple placeholder for a real deployment action.
+                bat 'echo "Deployment successful!"'
+            }
         }
     }
-
-    // Stage 3: Deploy the application.
-    // This stage deploys the built artifact to a target environment (e.g., dev, staging, production).
-    stage('Deploy') {
-        steps {
-            echo 'Deploying to the production environment...'
-            // Replace this with your actual deployment command (e.g., `ssh user@server "cd /path && ./start-app.sh"`,
-            // `docker push my-app:latest`, or using a deployment plugin).
-            sh 'echo "Deployment successful!"'
-        }
-    }
-}
-
 }
