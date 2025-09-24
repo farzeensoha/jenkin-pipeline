@@ -10,7 +10,7 @@ pipeline {
     // Defines the tools required for the pipeline.
     // These names must match the tool names configured in your Jenkins setup.
     tools {
-        jdk 'OpenJDK 17'
+        jdk 'Java 21'
         maven 'Maven 3'
     }
 
